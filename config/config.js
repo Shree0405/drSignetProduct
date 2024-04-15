@@ -1,0 +1,12 @@
+import dotenv from "dotenv";
+dotenv.config();
+const CONFIG = {};
+CONFIG.MONGOURL = process.env.MONGOURL;
+CONFIG.PORT = process.env.PORT;
+CONFIG.PatientNo = process.env.PatientNo;
+CONFIG.NODE_ENV = process.env.NODE_ENV ?? "development";
+export const SMTP_HOST = process.env.SMTP_HOST;
+export const SMTP_PORT = process.env.SMTP_PORT;
+export const SMTP_USER = process.env.SMTP_USER;
+export const SMTP_PASS = process.env.SMTP_PASS;
+export default CONFIG;
