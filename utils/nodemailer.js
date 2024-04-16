@@ -1,23 +1,26 @@
  import nodemailer from "nodemailer";
-import {
-	SMTP_HOST,
-	SMTP_PORT,
-	SMTP_USER,
-	SMTP_PASS,
-} from "../config/config.js";
+ import CONFIG from "../config/config.js";
 
 const transporter = nodemailer.createTransport({
-	host: SMTP_HOST,
-	port: SMTP_PORT,
+	host:CONFIG. SMTP_HOST,
+	port: CONFIG.SMTP_PORT,
 	secure: false,
 	auth: {
-		user: SMTP_USER,
-		pass: SMTP_PASS,
+		user: CONFIG.SMTP_USER,
+		pass:CONFIG. SMTP_PASS,
 	},
 });
 
-const sendEmail = (mailOptions) => {
-	return transporter.sendMail(mailOptions);
+const sendEmail =async (mailOptions) => {
+	return transporter.sendMail({
+        from:CONFIG. SMTP_USER,
+        to:mailOptions.email,
+        subject: 'Message',
+        text: `this is your otp ${mailOptions.otp}`
+    }, (err, info) => {
+        console.log(info.envelope);
+        console.log(info.messageId);
+    });
 };
 
 export default sendEmail ;

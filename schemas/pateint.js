@@ -95,8 +95,13 @@ const patientSchema = new mongoose.Schema(
     },
     status: {
       type: Number,
-      enum: [0, 1, 2, 3], //"0" [Note:"Delete"] "1" [Note:"Active"] "2" [Note:"Inactive"] "3"  [Note:"OTP not verified"]
+      enum: [0, 1, 2], //"0" [Note:"Delete"] "1" [Note:"Active"] "2" [Note:"Inactive"]
     },
+    isVerified:{
+      type: Number,
+      enum:[0,1], //0:Not verified, 1:verified
+      default:0
+    }
   },
   { timestamps: true, versionKey: false }
 );
