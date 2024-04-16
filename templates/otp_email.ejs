@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:v="urn:schemas-microsoft-com:vml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0;" />
+  <title>Dr.Signet</title>
+  <style type="text/css">
+    html {
+      height: 100%;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 2px;
+      border: 5px solid black
+    }
+
+    body {
+      box-sizing: border-box;
+      padding: 2px;
+      border: 5px solid black
+    }
+
+    header {
+      background-color: #00B050;
+      display: inline-flex;
+      width: 100%;
+      justify-content: space-between !important;
+      border-bottom: 1px solid black
+    }
+
+    .company-name-text {
+      margin: 2px;
+      color: white;
+      font-weight: bolder;
+      display: flex;
+      justify-content: space-between !important;
+      font-size: 24px;
+    }
+
+    .company-about-text {
+      color: black;
+      font-weight: bold;
+      margin-left: 2px;
+      display: flex;
+      justify-content: space-between !important;
+      margin-top: 0px;
+      font-size: 14px
+    }
+
+    .company-iso-text {
+      color: white;
+      font-weight: bold;
+      font-size: 12px;
+      margin-right: 14px;
+      margin-left: auto;
+    }
+
+    footer {
+      background-color: #00B050;
+      border-top: 1px solid black;
+      display: inline-flex;
+      width: 100%;
+      justify-content: space-between !important;
+      color: black;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    img {
+      margin: 2px
+    }
+
+    .main-subject-line {
+      display: inline-flex;
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .main-logo {
+      margin-right: 4px;
+      margin-left: auto;
+    }
+
+    .signature {
+      color: #274E13;
+      font-weight: bold
+    }
+
+    .webinfo {
+      display: flex;
+    }
+  </style>
+</head>
+
+<body class="body">
+
+  <header>
+    <div class="header">
+      <p class="company-name-text">Dr. Signet</p>
+      <p class="company-about-text">Healthcare Through Technology</p>
+    </div>
+    <div class="company-iso-text">
+      <p>ISO 27001:2013</p>
+    </div>
+  </header>
+  <main>
+    <div class="main-subject-line">
+      <p>Dear, <%= name %>,</p>
+      <img class="main-logo" src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_logo_email.png" width="32" height="32" />
+    </div>
+    <div>
+      <p>Your One-Time Password (OTP) is: <%= otp %></p>
+    </div>
+    <div>
+      <p class="signature">With Regards,</p>
+      <p>Team Dr.Signet Healthcare</p>
+    </div>
+  </main>
+  <footer>
+
+    <div class="footer">
+      <div>
+        <div class="webinfo">
+          <img src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_email_website.png" width="15" height="15" />
+          <span>www.drsignet.com</span>
+        </div>
+        <div class="webinfo">
+          <img src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_email_contact.png" width="15" height="15" />
+          <span>+91- 9776139776</span>
+        </div>
+      </div>
+
+      <div>
+        <a href="https://www.facebook.com/DR.SIGNET4U"><img src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_email_fb.png" width="15" height="15" /></a>
+        <a href="https://instagram.com/drsignet?igshid=MzRlODBiNWFlZA=="><img src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_email_insta.png" width="15" height="15" /></a>
+        <a href="https://www.linkedin.com/company/drsignet-healthcare-pvt-ltd/"><img src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_email_linkedin.png" width="15" height="15" /></a>
+        <a href="https://play.google.com/store/apps/details?id=com.drsignetplus.patient&pli=1"><img src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_email_playstore.png" width="15" height="15" /></a>
+        <img src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_email_appstore.png" width="15" height="15" />
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>

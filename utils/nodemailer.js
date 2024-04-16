@@ -15,12 +15,14 @@ const sendEmail =async (mailOptions) => {
 	return transporter.sendMail({
         from:CONFIG. SMTP_USER,
         to:mailOptions.email,
-        subject: 'Message',
-        text: `this is your otp ${mailOptions.otp}`
+        subject: 'otp Verification',
+        html:renderFile
+        //text: `this is your otp ${mailOptions.otp}`
     }, (err, info) => {
         console.log(info.envelope);
         console.log(info.messageId);
-    });
+     }
+    );
 };
 
 export default sendEmail ;

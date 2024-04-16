@@ -1,6 +1,9 @@
 import patient from "../../schemas/pateint.js";
 import moment from "moment";
 import jwt from "jsonwebtoken";
+import ejs from "ejs";
+import path from "path";
+import fs from "fs";
 import CONFIG from "../../config/config.js";
 import common from "../../utils/common.js";
 import sendEmail from "../../utils/nodemailer.js";
@@ -73,11 +76,23 @@ const patientLoginOtpGeneration = async (req, res) => {
         }
       );
 
-      // Send OTP via email
-      await sendEmail({ email: loginData.email, otp: otp });
+      const emailTemplatePath = path.join(
+				__dirname,
+				"..",
+				"..",
+				"templates",
+				"otp_email.ejs"
+			);
+            const templateContent = fs.readFileSync(emailTemplatePath, 'utf8');
 
-      return res.send({ status: 1, message: "OTP sent successfully" });
-    }
+            // Render the EJS template with data
+            const renderedTemplate = ejs.render(templateContent, { name: loginData.email, otp: otp });
+
+            // Send the rendered email
+            await sendEmail({ email: loginData.email, content: renderedTemplate });
+
+            return res.send({ status: 1, message: "OTP sent successfully" });
+        }
   } catch (error) {
     return res.send({ status: 0, message: error.message });
   }
@@ -126,8 +141,34 @@ const verifyOTPAndGenerateToken = async (req, res) => {
   }
 };
 
+//==============================Resend Otp=======================//
+
+const resendOTP = async (req, res) => {
+  try {
+    const { patientId } = req.body;
+    // Find the user by userId
+    const patientData = await patient.findOne({ _id: patientId }, { email: 1 });
+    if (!patientData) {
+      return res.send({ status: 0, message: "User not found" });
+    }
+    // Generate a new OTP and set the expiration time
+    const newOTP = common.otpGenerate();
+    const expirationTime = new Date(Date.now() + 10 * 60 * 1000); // Set expiration to 10 minutes from now
+    // Update user's OTP and expiration time in the database
+    await patient.findOneAndUpdate(
+      { _id: patientId },
+      { $set: { otp: newOTP, otpExpAt: expirationTime } }
+    );
+    // Send the OTP to the user via email
+    await sendEmail({ email: patientData.email, otp: newOTP });
+    return res.send({ status: 1, message: "OTP resent successfully" });
+  } catch (error) {
+    return res.send({ status: 0, message: error.message });
+  }
+};
 
 //========================get patient data========================//
+
 const getPatientData = async (req, res) => {
   try {
     const getPatientData = await patient
@@ -148,17 +189,130 @@ const getPatientData = async (req, res) => {
 };
 
 //=========================get pateint by patientID================//
-// const getPatientDataById = async (req, res) => {
-//   try {
-//     const getPatientDataById = req.body;
-//   } catch (error) {
-//     return res.send({ status: 0, message: error.message });
-//   }
-// };
+
+const getPatientDataById = async (req, res) => {
+  try {
+    let getPatientDataById = req.body,
+      getPatientData;
+    getPatientData = await patient.findById(
+      {
+        _id: getPatientDataById.patientId,
+      },
+      { updatedAt: 0, _id: 0, isVerified: 0 }
+    );
+    if (getPatientData) {
+      return res.send({
+        status: 1,
+        message: "data fetch successfully",
+        data: getPatientData,
+      });
+    } else {
+      return res.send({ status: 0, data: "[]" });
+    }
+  } catch (error) {
+    return res.send({ status: 0, message: error.message });
+  }
+};
+
+//======================get patient by status, mobileNumber , patientId
+
+const getPatientDataByFilter = async (req, res) => {
+  try {
+    const { status, mobileNumber, patientId } = req.body;
+    let query = {};
+    if (status || mobileNumber || patientId) {
+      if (status) {
+        query.status = status;
+      }
+      if (mobileNumber) {
+        query.mobileNumber = mobileNumber;
+      }
+      if (patientId) {
+        query.patientId = patientId;
+      }
+      const filterData = await patient.find(query);
+      if (filterData.length > 0) {
+        return res.send({
+          status: 1,
+          message: "Data fetched successfully",
+          data: filterData,
+        });
+      } else {
+        return res.send({
+          status: 0,
+          message: "No data found matching the criteria",
+        });
+      }
+    } else {
+      // If no filter criteria provided, return all patients
+      const allPatients = await patient.find();
+      return res.send({
+        status: 1,
+        message: "All patients fetched successfully",
+        data: allPatients,
+      });
+    }
+  } catch (error) {
+    return res.send({ status: 0, message: error.message });
+  }
+};
+
+//==============================update mobile number API using email and userId================================//
+
+const updateMobilePhone = async (req, res) => {
+  try {
+    const updateData = req.body;
+    const updateMobileData = await patient.findOneAndUpdate(
+      { _id: updateData.patientId, status: 1 },
+      { $set: { mobileNumber: updateData.mobileNumber } },
+      { new: true }
+    );
+    if (updateMobileData) {
+      return res.send({
+        status: 1,
+        message: "Data updated successfully",
+      });
+    } else {
+      return res.send({ status: 0, message: "Patient not found" });
+    }
+  } catch (error) {
+    return res.send({ status: 0, message: error.message });
+  }
+};
+
+//============================delete API =================================================//
+
+const deletePatient = async (req, res) => {
+  try {
+    const deletedPatientData = req.body;
+
+    // Assuming you have your Patient model imported as 'patient'
+    const patientData = await patient.findByIdAndUpdate(
+      { _id: deletedPatientData.patientId },
+      { $set: { status: 0 } }
+    );
+
+    if (patientData) {
+      return res.send({ status: 1, message: "Patient deleted successfully" });
+    } else {
+      return res.send({
+        status: 0,
+        message: "Patient not found or something went wrong",
+      });
+    }
+  } catch (error) {
+    return res.send({ status: 0, message: error.message });
+  }
+};
 
 export default {
   patientLoginOtpGeneration,
   patientRegistration,
   getPatientData,
   verifyOTPAndGenerateToken,
+  getPatientDataById,
+  resendOTP,
+  getPatientDataByFilter,
+  updateMobilePhone,
+  deletePatient,
 };
