@@ -105,11 +105,23 @@
   </header>
   <main>
     <div class="main-subject-line">
-      <p>Dear, <%= name %>,</p>
+      <p>Dear <%= name %>,</p>
       <img class="main-logo" src="https://drsignet-dev.s3.ap-south-1.amazonaws.com/Email/img_logo_email.png" width="32" height="32" />
     </div>
     <div>
-      <p>Your One-Time Password (OTP) is: <%= otp %></p>
+      <p>Thank you for registering with Us </p>
+			<p>
+				To complete your registration process, please use the following
+				one-time password (OTP):
+			</p>
+			<p> <strong><%=otp %></strong>  </p>
+      <p>
+				Your OTP will get expires after 10 minutes.
+			</p>
+			<p>
+				We appreciate your interest and thank you for considering our
+				platform.
+			</p>
     </div>
     <div>
       <p class="signature">With Regards,</p>

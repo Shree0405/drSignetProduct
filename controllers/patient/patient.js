@@ -1,13 +1,18 @@
-import patient from "../../schemas/pateint.js";
 import moment from "moment";
 import jwt from "jsonwebtoken";
 import ejs from "ejs";
-import path from "path";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import path from 'path';
 import fs from "fs";
+import patient from "../../schemas/patient/pateint.js";
+import sendMessage from "../../utils/sms_module.js";
 import CONFIG from "../../config/config.js";
 import common from "../../utils/common.js";
 import sendEmail from "../../utils/nodemailer.js";
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 //==============Registration API==========================//
 
 const patientRegistration = async (req, res) => {
@@ -58,7 +63,7 @@ const patientLoginOtpGeneration = async (req, res) => {
       otp;
     loginData = await patient.findOne(
       { mobileNumber: patientLogin.mobileNumber },
-      { email: 1 }
+      { email: 1 ,firstName:1}
     );
     if (!loginData) {
       return res.send({ status: 0, message: "you are not registered" });
@@ -75,21 +80,19 @@ const patientLoginOtpGeneration = async (req, res) => {
           },
         }
       );
-
-      const emailTemplatePath = path.join(
-				__dirname,
-				"..",
-				"..",
-				"templates",
-				"otp_email.ejs"
-			);
-            const templateContent = fs.readFileSync(emailTemplatePath, 'utf8');
-
-            // Render the EJS template with data
-            const renderedTemplate = ejs.render(templateContent, { name: loginData.email, otp: otp });
-
-            // Send the rendered email
-            await sendEmail({ email: loginData.email, content: renderedTemplate });
+      const emailTemplatePath = path.join(__dirname, "../../templates/otp_email.ejs");
+      const renderedTemplate = await ejs.renderFile(emailTemplatePath, {
+        name: loginData.firstName, 
+        otp: otp,
+      });
+      
+      // Sending email with rendered template
+      await sendEmail({
+        from: CONFIG.SMTP_USER,
+        to: loginData.email,
+        subject: "OTP Verification",
+        html: renderedTemplate,
+      });
 
             return res.send({ status: 1, message: "OTP sent successfully" });
         }
