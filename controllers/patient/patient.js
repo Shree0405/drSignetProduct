@@ -91,6 +91,7 @@ const patientLoginOtpGeneration = async (req, res) => {
         from: CONFIG.SMTP_USER,
         to: loginData.email,
         subject: "OTP Verification",
+        
         html: renderedTemplate,
       });
 
